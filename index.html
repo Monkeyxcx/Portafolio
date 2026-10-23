@@ -2,16 +2,61 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Brahian David - Desarrollador Front-end</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brahian David — Desarrollador Front-end & Diseñador UI/UX</title>
+    <meta
+      name="description"
+      content="Portafolio de Brahian David, desarrollador front-end y diseñador UI/UX: experiencias web interactivas con React, Next.js, Laravel y una escena 3D en tiempo real con Three.js."
+    />
+    <meta name="theme-color" content="#1b1b1b" />
+    <meta name="author" content="Brahian David Gómez Henao" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_CO" />
+    <meta property="og:site_name" content="Brahian David" />
+    <meta property="og:title" content="Brahian David — Desarrollador Front-end & Diseñador UI/UX" />
+    <meta
+      property="og:description"
+      content="Experiencias web interactivas con React, Next.js, Laravel y animación 3D en tiempo real."
+    />
+
+    <!-- Favicon monograma "BD" en la paleta del sitio -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231b1b1b'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Segoe UI, Poppins, sans-serif' font-weight='700' font-size='30' fill='%23eef8ce'%3EBD%3C/text%3E%3C/svg%3E"
+    />
+
+    <!-- Precarga de recursos: sólo fuentes críticas. El modelo 3D ya NO se
+         pre-carga: se descarga después de load + idle para no competir. -->
+    <link rel="preload" href="fonts/DevilBreeze-Bold.woff" as="font" type="font/woff" crossorigin />
+    <link rel="preload" href="fonts/Poppins-Regular.woff" as="font" type="font/woff" crossorigin />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+
     <link rel="stylesheet" href="style.css" />
+
+    <!-- Mapa de módulos: three.js fijado en 0.129.0 (la última versión cuyo
+         GLTFLoader soporta KHR_materials_pbrSpecularGlossiness, extensión que
+         usan todos los materiales de car.glb). Servido por jsDelivr en vez de
+         Skypack para menor latencia y disponibilidad. -->
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.129.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.129.0/examples/jsm/"
+        }
+      }
+    </script>
   </head>
 
   <body>
+    <a class="skip-link" href="#intro">Saltar al contenido</a>
+
     <header>
       <div class="content-fit">
         <div class="logo">Brahian David</div>
-        <nav>
+        <nav aria-label="Roles profesionales">
           <ul>
             <li>Desarrollador Front-end</li>
             <li>Diseñador UI/UX</li>
@@ -19,78 +64,141 @@
         </nav>
       </div>
     </header>
-    <div class="section" id="banner">
-      <div class="content-fit">
-        <div class="title" data-before="DESARROLLADOR">FRONT-END</div>
-      </div>
-      <!-- <img src="img/flower.png" class="decorate" alt="" style="width: 50vw; bottom: 0; right: 0;">
-    <img src="img/leaf.png" class="decorate" alt="" style="width: 30vw; bottom: 0; left: 0;"> -->
-    </div>
-    <div class="section" id="intro">
-      <div class="content-fit">
-        <div class="number">01</div>
-        <div class="des">
-          <div class="title">Sobre mí</div>
-          <p>
-            Soy un desarrollador front-end apasionado por crear experiencias web
-            interactivas y atractivas. Con experiencia en HTML, CSS, JavaScript
-            y frameworks como React y Laravel, me especializo en diseñar
-            interfaces de usuario intuitivas y responsivas. Mi enfoque se centra
-            en la optimización del rendimiento y la accesibilidad, asegurando
-            que cada proyecto que desarrollo sea rápido, eficiente y fácil de
-            usar para todos los usuarios.
-          </p>
-        </div>
-      </div>
-    </div>
-    <div class="section" id="description">
-      <div class="content-fit">
-        <div class="number">02</div>
-        <div class="des">
-          <div class="title">Habilidades</div>
-          <p>
-            Mi conjunto de habilidades incluye un dominio avanzado de HTML5,
-            CSS3 y JavaScript (ES6+). Tengo experiencia trabajando con React y
-            Next.js como tambien con Laravel V5.5 en adelante para crear
-            aplicaciones web modernas y eficientes. Además, estoy familiarizado
-            con herramientas de control de versiones como Git y plataformas de
-            colaboración como GitHub. Mi experiencia en diseño UI/UX me permite
-            crear interfaces atractivas y funcionales, y mi conocimiento de SEO
-            ayuda a optimizar los sitios web para una mejor visibilidad en los
-            motores de búsqueda.
-          </p>
-        </div>
-      </div>
-    </div>
-    <div class="section" id="contact">
-      <div class="content-fit">
-        <div class="number">03</div>
-        <div class="des">
-          <div class="title">Contacto</div>
-          <table>
-            <tr>
-              <td>Email</td>
-              <td><a href="mailto:brahiangomez13@gmail.com">brahiangomez13@gmail.com</a></td>
-            </tr>
-            <tr>
-              <td>Teléfono</td>
-              <td><a href="tel:+573003469517">+57 3003469517</a></td>
-            </tr>
-            <tr>
-              <td>LinkedIn</td>
-              <td><a href="https://www.linkedin.com/in/brahian-david-gomez-henao-10052933a/" target="_blank" rel="noopener noreferrer">Perfil de LinkedIn</a></td>
-            </tr>
-            <tr>
-              <td>GitHub</td>
-              <td><a href="https://github.com/Monkeyxcx" target="_blank" rel="noopener noreferrer">Perfil de GitHub</a></td>
-            </tr>
-          </table>
-          <div class="sign">Brahian David</div>
-        </div>
-      </div>
-    </div>
-  </body>
 
-  <div id="container3D"></div>
-  <script type="module" src="app.js"></script>
+    <main>
+      <section class="section" id="banner" aria-label="Inicio">
+        <div class="content-fit">
+          <h1 class="title" data-before="DESARROLLADOR">FRONT-END</h1>
+        </div>
+      </section>
+
+      <section class="section" id="intro" aria-labelledby="intro-title">
+        <div class="content-fit">
+          <div class="number" aria-hidden="true">01</div>
+          <div class="des">
+            <h2 class="title" id="intro-title">Sobre mí</h2>
+            <p>
+              Soy Brahian David, desarrollador front-end y diseñador UI/UX.
+              Creo experiencias web interactivas —como este portafolio, con una
+              escena 3D en tiempo real hecha en Three.js— donde el código y el
+              diseño trabajan juntos. Desarrollo interfaces con React y
+              Next.js, integro backends con Laravel y cuido el rendimiento, la
+              accesibilidad y el SEO para que cada sitio se vea bien, cargue
+              rápido y funcione bien en cualquier dispositivo.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="description" aria-labelledby="skills-title">
+        <div class="content-fit">
+          <div class="number" aria-hidden="true">02</div>
+          <div class="des">
+            <h2 class="title" id="skills-title">Habilidades</h2>
+            <p>
+              Domino HTML5, CSS3 y JavaScript moderno (ES6+) y los aplico en
+              productos reales con React y Next.js, además de Laravel para
+              backends robustos. Manejo Git y GitHub a diario, diseño
+              wireframes y sistemas de interfaz con enfoque UI/UX, y añado
+              capas de detalle como animación 3D con WebGL y Three.js,
+              optimización de assets y buenas prácticas de SEO para que cada
+              proyecto se posicione y se sienta ágil.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section projects-section" id="projects" aria-labelledby="projects-title">
+        <div class="content-fit">
+          <div class="number" aria-hidden="true">03</div>
+          <div class="projects-intro">
+            <span class="eyebrow">TRABAJO SELECCIONADO</span>
+            <h2 class="title" id="projects-title">Proyectos</h2>
+            <p>
+              Una selección de productos, interfaces y APIs que muestran cómo
+              convierto ideas en experiencias digitales funcionales.
+            </p>
+          </div>
+
+          <article class="featured-project" id="sistegra" aria-labelledby="sistegra-title">
+            <div class="featured-project__signal" aria-hidden="true"><span></span> EN PRODUCCIÓN</div>
+            <div class="featured-project__content">
+              <span class="project-kicker">PROYECTO ACTUAL · TRABAJO PROFESIONAL</span>
+              <h3 id="sistegra-title">Sistegra SST</h3>
+              <p>
+                Mi principal espacio de trabajo actual: una plataforma web para
+                la gestión y seguimiento de procesos de seguridad y salud en el
+                trabajo. Aquí concentro gran parte de mi experiencia construyendo
+                interfaces, flujos de usuario y soluciones que deben funcionar
+                de forma clara en contextos reales.
+              </p>
+              <ul class="project-tags" aria-label="Tecnologías y áreas">
+                <li>Producto web</li>
+                <li>UI/UX</li>
+                <li>Laravel</li>
+                <li>JavaScript</li>
+              </ul>
+            </div>
+            <div class="featured-project__visual" aria-hidden="true">
+              <span class="visual-orbit visual-orbit--one"></span>
+              <span class="visual-orbit visual-orbit--two"></span>
+              <span class="visual-grid"></span>
+              <strong>SST</strong>
+            </div>
+          </article>
+
+          <div class="projects-grid" id="projects-grid" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="section" id="contact" aria-labelledby="contact-title">
+        <div class="content-fit">
+          <div class="number" aria-hidden="true">04</div>
+          <div class="des">
+            <h2 class="title" id="contact-title">Contacto</h2>
+            <table>
+              <tbody>
+                <tr>
+                  <th scope="row">Email</th>
+                  <td><a href="mailto:brahiangomez13@gmail.com">brahiangomez13@gmail.com</a></td>
+                </tr>
+                <tr>
+                  <th scope="row">Teléfono</th>
+                  <td><a href="tel:+573003469517">+57 300 346 9517</a></td>
+                </tr>
+                <tr>
+                  <th scope="row">LinkedIn</th>
+                  <td>
+                    <a
+                      href="https://www.linkedin.com/in/brahian-david-gomez-henao-10052933a/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >Perfil de LinkedIn</a
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">GitHub</th>
+                  <td>
+                    <a
+                      href="https://github.com/Monkeyxcx"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >Perfil de GitHub</a
+                    >
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="sign" aria-hidden="true">Brahian David</div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Lienzo 3D decorativo (oculto para lectores de pantalla) -->
+    <div id="container3D" aria-hidden="true"></div>
+
+    <script type="module" src="app.js"></script>
+  </body>
 </html>

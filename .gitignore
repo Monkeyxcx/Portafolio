@@ -1,0 +1,8 @@
+# Skills instaladas en el proyecto por el agente (no son parte del portafolio)
+.agents/
+skills-lock.json
+
+# Sistema
+Thumbs.db
+desktop.ini
+.DS_Store

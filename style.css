@@ -1,24 +1,90 @@
-@import url("https://fonts.cdnfonts.com/css/devil-breeze");
-@import url("https://fonts.cdnfonts.com/css/poppins");
-@import url("https://fonts.cdnfonts.com/css/bimbo");
+/* Fuentes auto-alojadas (woff locales): sin @import bloqueantes ni peticiones
+   a terceros. font-display: swap pinta el texto con la fuente del sistema y
+   cambia cuando llega la definitiva. */
+@font-face {
+  font-family: "devil breeze";
+  src: url("fonts/DevilBreeze-Bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "devil breeze";
+  src: url("fonts/DevilBreeze-Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Poppins";
+  src: url("fonts/Poppins-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Poppins";
+  src: url("fonts/Poppins-Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Poppins";
+  src: url("fonts/Poppins-SemiBold.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Poppins";
+  src: url("fonts/Poppins-Thin.woff") format("woff");
+  font-weight: 100 200;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Bimbo";
+  src: url("fonts/Bimbo.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --color-bg: #1b1b1b;
+  --color-text: #eef8ce;
+  --color-accent: #455f4fd2;
+  --color-line: #445022;
+  --color-link-hover: #8d5b0f;
+  --header-height: 3.5em;
+}
+
+html {
+  /* Navegación por anclas suave, respetando la preferencia del sistema */
+  scroll-behavior: smooth;
+  /* El encabezado fijo no debe tapar el destino de los enlaces */
+  scroll-padding-top: var(--header-height);
+}
 
 body {
   margin: 0;
-  font-family: "Montserrat", sans-serif;
-  background-color: #1b1b1b;
-  color: #eef8ce;
   font-family: "Poppins", sans-serif;
   font-size: 14px;
-  background-image: url(img/bg.png),
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  /* Fondo en gradiente CSS puro (tonos oscuros): 0 bytes, 0 decode, 0 capa de
+     imagen que rasterizar. Sustituye a img/bg.webp (723 KB, 42 MB de textura). */
+  background-image:
+    radial-gradient(75rem 48rem at 74% 6%, rgba(151, 168, 74, 0.15), transparent 62%),
+    radial-gradient(58rem 44rem at 4% 76%, rgba(214, 198, 162, 0.13), transparent 64%),
+    radial-gradient(70rem 46rem at 52% 96%, rgba(150, 166, 62, 0.17), transparent 66%),
+    radial-gradient(50rem 34rem at 96% 42%, rgba(126, 150, 70, 0.1), transparent 70%),
     repeating-linear-gradient(
       to right,
       transparent 0 500px,
       #73814b33 500px 501px
     );
-  background-size: 100%;
-}
-*::-webkit-scrollbar {
-  width: 0;
 }
 
 * {
@@ -27,9 +93,44 @@ body {
   list-style: none;
   box-sizing: border-box;
 }
+
+*::-webkit-scrollbar {
+  width: 0;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-text);
+}
+
+/* Accesibilidad: enlace de salto para navegación por teclado */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1em;
+  z-index: 200;
+  padding: 0.6em 1em;
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-line);
+  border-radius: 0 0 6px 6px;
+  text-decoration: none;
+}
+.skip-link:focus {
+  top: 0;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--color-text);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
 .section {
   width: 100%;
   min-height: 100vh;
+  min-height: 100dvh; /* alto estable en móviles con barra del navegador */
   position: relative;
   display: flex;
   justify-content: center;
@@ -40,31 +141,36 @@ body {
   width: min(1200px, 90vw);
   margin: auto;
   min-height: 100vh;
+  min-height: 100dvh;
   position: relative;
   padding-block: 10em;
 }
+
 header {
   padding-block: 1em;
   position: fixed;
   top: 0;
   width: 100%;
-  z-index: 10px;
-  backdrop-filter: blur(20px);
   z-index: 100;
-  background-color: #1b1b1b11;
+  /* Sin backdrop-filter: el blur se recalcula cada frame sobre todo el ancho
+     y era uno de los puntos calientes de composición en el trace. */
+  background-color: rgba(27, 27, 27, 0.78);
   background-image: repeating-linear-gradient(
     to right,
     transparent 0 500px,
     #eee1 500px 501px
   );
 }
+
 header .content-fit {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1em;
   min-height: unset !important;
   padding-block: unset !important;
 }
+
 header .content-fit nav ul {
   display: flex;
   gap: 2em;
@@ -78,6 +184,7 @@ header .content-fit nav ul {
   position: relative;
   text-align: center;
 }
+
 #banner .title::before {
   content: attr(data-before);
   position: absolute;
@@ -85,36 +192,427 @@ header .content-fit nav ul {
   inset: 0.66em 0 0 0;
   z-index: -1;
   background: transparent;
-  color: #455f4fd2;
+  color: var(--color-accent);
 }
+
 .section .decorate {
   position: absolute;
 }
+
 #intro .content-fit {
   display: flex;
   gap: 30%;
   align-items: center;
 }
+
 .section .number {
   font-family: "devil breeze";
   font-size: 15em;
   font-weight: bold;
 }
+
 .section .content-fit .title {
   font-family: "devil breeze";
   font-size: 5em;
   font-weight: bold;
+  position: relative;
 }
+
+/* Tipografía reactiva SIN JavaScript: scroll-driven animations.
+   animation-timeline: view() se resuelve en el compositor (transform/opacity),
+   con cero escrituras de estilo por frame y sin getBoundingClientRect. En
+   navegadores sin soporte, el título queda estático y la web funciona igual. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .section .content-fit .title {
+      animation: title-approach linear both;
+      animation-timeline: view(block);
+      animation-range: entry 0% cover 28%;
+    }
+    @keyframes title-approach {
+      from {
+        transform: translate3d(0, 26px, -70px) scale(0.965);
+        opacity: 0.7;
+      }
+      to {
+        transform: translate3d(0, 0, 0) scale(1);
+        opacity: 1;
+      }
+    }
+  }
+}
+
+/* Resplandor estático sólo en la sección activa: text-shadow no obliga a
+   re-renderizar una máscara de texto por frame como hacía filter: drop-shadow. */
+.section.is-active .content-fit .title {
+  text-shadow: 0 0 22px rgba(238, 248, 206, 0.45);
+}
+
+/* Entrada escalonada discreta: las letras no se escalan, rotan ni deforman. */
+.title-letter {
+  display: inline-block;
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.section.is-active .title-letter {
+  animation: cinematic-title-in 800ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--letter-index, 0) * 32ms);
+}
+
+@keyframes cinematic-title-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 #description .content-fit {
   padding-right: 30%;
 }
+
 #description .number {
   font-size: 5em;
 }
+
 #description .title {
   font-size: 7em;
   font-weight: 500;
 }
+
+/* --- Portafolio de proyectos --------------------------------------------- */
+.projects-section {
+  align-items: flex-start;
+}
+
+.projects-section .content-fit {
+  width: min(1280px, 92vw);
+  padding-block: 9em 7em;
+}
+
+.projects-section > .content-fit > .number {
+  font-size: 5em;
+  line-height: 0.8;
+  margin-bottom: 0.25em;
+}
+
+.projects-intro {
+  max-width: 650px;
+  margin-bottom: 2.5em;
+}
+
+.eyebrow,
+.project-kicker {
+  display: block;
+  color: #b7c88c;
+  font-size: 0.72em;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.projects-intro .title {
+  margin: 0.08em 0 0.12em;
+  font-size: clamp(3.5em, 8vw, 7em) !important;
+}
+
+.projects-intro p {
+  max-width: 540px;
+  line-height: 1.7;
+}
+
+.featured-project {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(260px, 0.9fr);
+  min-height: 330px;
+  margin-bottom: 3em;
+  overflow: hidden;
+  border: 1px solid #dbe9a62e;
+  border-radius: 4px;
+  background: linear-gradient(115deg, #1c241bde, #101310b8 58%, #303c1b9e);
+  box-shadow: 0 18px 80px #0008, inset 0 0 80px #91a83b0d;
+  isolation: isolate;
+}
+
+.featured-project::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(90deg, transparent, #ecf8bb08 50%, transparent);
+  transform: translateX(-100%);
+  animation: featured-scan 7s ease-in-out infinite;
+}
+
+/* Animaciones decorativas en pausa salvo que la card esté visible: la sección
+   de proyectos no gasta GPU/CPU cuando el usuario está en otra parte. */
+.featured-project::before,
+.featured-project__signal span,
+.visual-orbit {
+  animation-play-state: paused;
+}
+
+.featured-project.in-view::before,
+.featured-project.in-view .featured-project__signal span,
+.featured-project.in-view .visual-orbit {
+  animation-play-state: running;
+}
+
+@keyframes featured-scan {
+  0%, 35% { transform: translateX(-100%); }
+  65%, 100% { transform: translateX(100%); }
+}
+
+.featured-project__content {
+  position: relative;
+  z-index: 2;
+  padding: clamp(1.7em, 4vw, 3.5em);
+  align-self: center;
+}
+
+.featured-project h3 {
+  margin: 0.2em 0 0.25em;
+  color: var(--color-text);
+  font-family: "devil breeze", sans-serif;
+  font-size: clamp(2.5em, 5vw, 5em);
+  line-height: 0.95;
+}
+
+.featured-project p {
+  max-width: 610px;
+  line-height: 1.7;
+}
+
+.featured-project__signal {
+  position: absolute;
+  top: 1.4em;
+  right: 1.7em;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 0.55em;
+  color: #d9eba7;
+  font-size: 0.65em;
+  letter-spacing: 0.16em;
+}
+
+.featured-project__signal span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #b8d64f;
+  box-shadow: 0 0 14px #c9ec4e;
+  animation: signal-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes signal-pulse {
+  50% { opacity: 0.35; transform: scale(0.65); }
+}
+
+.featured-project__visual {
+  position: relative;
+  min-height: 280px;
+  overflow: hidden;
+  background: radial-gradient(circle at center, #b8cf6429, transparent 53%);
+}
+
+.featured-project__visual strong {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  color: #eef8ce12;
+  font-family: "devil breeze", sans-serif;
+  font-size: clamp(7em, 16vw, 13em);
+  line-height: 0.8;
+  transform: translate(-50%, -50%);
+}
+
+.visual-grid {
+  position: absolute;
+  inset: 10%;
+  background-image: linear-gradient(#d4e99c18 1px, transparent 1px), linear-gradient(90deg, #d4e99c18 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(circle, #000, transparent 70%);
+  transform: perspective(400px) rotateX(58deg) rotateZ(-15deg);
+}
+
+.visual-orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 78%;
+  height: 35%;
+  border: 1px solid #d9ef9970;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) rotate(-23deg);
+  animation: orbit-float 5s ease-in-out infinite;
+}
+
+.visual-orbit--two {
+  width: 50%;
+  height: 70%;
+  border-color: #a5bc5b44;
+  transform: translate(-50%, -50%) rotate(62deg);
+  animation-delay: -1.5s;
+}
+
+@keyframes orbit-float {
+  50% { transform: translate(-50%, -50%) rotate(-23deg) scale(1.08); opacity: 0.45; }
+}
+
+.project-tags,
+.project-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55em;
+}
+
+.project-tags {
+  margin-top: 1.5em;
+}
+
+.project-tags li,
+.project-card__meta span {
+  padding: 0.38em 0.75em;
+  border: 1px solid #dceca344;
+  border-radius: 999px;
+  color: #dceca3;
+  font-size: 0.72em;
+  letter-spacing: 0.03em;
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.3em;
+}
+
+.project-card {
+  display: flex;
+  min-height: 360px;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #eef8ce1f;
+  border-radius: 4px;
+  background: #11130fce;
+  transition: transform 350ms cubic-bezier(0.16, 1, 0.3, 1), border-color 250ms ease, background 250ms ease;
+}
+
+.project-card:hover {
+  border-color: #dceca366;
+  background: #1c241add;
+  transform: translateY(-10px);
+}
+
+.project-card__image {
+  position: relative;
+  display: block;
+  height: 145px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #2a3520, #11130f);
+}
+
+.project-card__image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 50%, #11130f);
+}
+
+.project-card__image img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  opacity: 0.78;
+  filter: saturate(0.7) contrast(1.05);
+  transition: transform 500ms ease, opacity 300ms ease;
+}
+
+.project-card:hover .project-card__image img {
+  opacity: 1;
+  transform: scale(1.06);
+}
+
+.project-card__open {
+  position: absolute;
+  top: 0.7em;
+  right: 0.8em;
+  z-index: 1;
+  display: grid;
+  width: 2em;
+  height: 2em;
+  place-items: center;
+  border: 1px solid #eef8ce55;
+  border-radius: 50%;
+  background: #111b;
+  color: var(--color-text);
+}
+
+.project-card__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 1.25em 1.3em 1.4em;
+}
+
+.project-card__meta {
+  justify-content: space-between;
+  margin-bottom: 0.8em;
+  color: #aebc87;
+  font-size: 0.72em;
+}
+
+.project-card__meta span {
+  border: 0;
+  padding: 0;
+  color: inherit;
+}
+
+.project-card h3 {
+  margin-bottom: 0.35em;
+  color: var(--color-text);
+  font-family: "devil breeze", sans-serif;
+  font-size: 2em;
+}
+
+.project-card p {
+  color: #d7dfbd;
+  font-size: 0.9em;
+  line-height: 1.65;
+}
+
+.project-card__actions {
+  display: flex;
+  gap: 1em;
+  margin-top: auto;
+  padding-top: 1.3em;
+}
+
+.project-card__link {
+  color: var(--color-text);
+  font-size: 0.8em;
+  text-decoration: none;
+}
+
+.project-card__link:hover {
+  color: #c6e36e;
+  text-decoration: underline;
+}
+
+/* Renderizado diferido fuera de pantalla: el navegador omite layout/paint de
+   estas secciones hasta que se acercan al viewport (menos trabajo en el scroll). */
+#projects,
+#contact {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 1400px;
+}
+
 #contact .content-fit {
   display: flex;
   justify-content: center;
@@ -122,78 +620,224 @@ header .content-fit nav ul {
   flex-direction: column;
   text-align: center;
 }
+
 #contact table {
   width: min(800px, 90vw);
   padding-top: 2em;
   font-size: 2em;
   margin: auto;
+  border-collapse: collapse;
 }
+
+#contact table th,
 #contact table td {
   padding-block: 0.5em;
-  border-bottom: 1px dashed #445022;
+  border-bottom: 1px dashed var(--color-line);
 }
-#contact table td:nth-child(1) {
+
+#contact table th {
   text-align: left;
   font-weight: 500;
 }
-#contact table td:nth-child(2) {
+
+#contact table td {
   text-align: right;
   font-weight: 200;
 }
+
 #contact .sign {
   font-family: "Bimbo", sans-serif;
   font-size: 10em;
 }
-#container3D {
-  position: fixed;
-  inset: 0;
-  /* background-color: red; */
-  z-index: -100;
-  pointer-events: none;
-}
+
 #contact table a {
-  color: #eef8ce; /* O el color que prefieras */
+  color: var(--color-text);
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
 #contact table a:hover {
-  color: #8d5b0f; /* Un color más claro para el hover */
+  color: var(--color-link-hover);
   text-decoration: underline;
 }
+
+/* Escena 3D: aparece en fade cuando el modelo termina de cargar
+   (clase "ready" añadida por app.js). Decorativa: sin eventos de puntero. */
+#container3D {
+  position: fixed;
+  inset: 0;
+  z-index: -100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.9s ease;
+}
+
+#container3D.ready {
+  opacity: 1;
+}
+
+/* La energía visual aparece sólo cuando el modelo ya está listo.
+   Sin mix-blend-mode: forzaba una pasada de composición extra por frame. */
+#container3D.ready::after {
+  content: "";
+  position: absolute;
+  inset: 42% 20% auto;
+  height: 18vh;
+  background: radial-gradient(ellipse, rgba(217, 138, 40, 0.14), transparent 70%);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
 @media screen and (max-width: 1023px) {
   #banner .title {
     font-size: 5em;
   }
+
   #intro .content-fit {
     flex-direction: column;
+    gap: 2em;
+  }
+
+  #intro .number {
+    font-size: 8em;
+  }
+
+  .projects-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
 @media screen and (max-width: 767px) {
+  /* Los gradientes se miden en rem: en pantallas estrechas cubren demasiada
+     superficie y tiñen el fondo. Aquí se reducen y se rebaja su intensidad. */
+  body {
+    background-image:
+      radial-gradient(38rem 30rem at 78% 4%, rgba(151, 168, 74, 0.12), transparent 62%),
+      radial-gradient(34rem 28rem at 0% 74%, rgba(214, 198, 162, 0.1), transparent 64%),
+      radial-gradient(40rem 30rem at 52% 98%, rgba(150, 166, 62, 0.13), transparent 66%),
+      repeating-linear-gradient(
+        to right,
+        transparent 0 500px,
+        #73814b33 500px 501px
+      );
+  }
+
+  header {
+    padding-block: 0.8em;
+  }
+
+  header .logo {
+    font-size: 0.95em;
+  }
+
+  header .content-fit nav ul {
+    gap: 1em;
+    font-size: 0.85em;
+    text-align: right;
+  }
+
   #banner .title {
     font-size: 3em;
   }
-  #intro .content-fit {
-    flex-direction: column;
-  }
+
   .section .number {
     font-size: 5em;
   }
+
   .section .content-fit .title {
     font-size: 2em;
   }
+
   #description .content-fit {
     padding-right: 0;
-  }
-  #contact table {
-    font-size: 1em;
-  }
-  #contact .sign {
-    font-size: 2em;
   }
 
   #description .title {
     font-size: 3em;
     font-weight: 500;
+  }
+
+  .projects-section .content-fit {
+    padding-block: 7em 5em;
+  }
+
+  .featured-project {
+    grid-template-columns: 1fr;
+  }
+
+  .featured-project__visual {
+    min-height: 190px;
+  }
+
+  .projects-grid {
+    grid-template-columns: 1fr;
+  }
+
+  #contact table {
+    font-size: 1em;
+  }
+
+  #contact .sign {
+    font-size: 2em;
+  }
+
+  .projects-section > .content-fit > .number {
+    font-size: 4em;
+  }
+
+  .featured-project__signal {
+    top: 1em;
+    right: 1em;
+    font-size: 0.55em;
+  }
+
+  .featured-project__content {
+    padding: 1.5em;
+  }
+
+  .project-card {
+    min-height: 330px;
+  }
+}
+
+@media screen and (max-width: 479px) {
+  header .content-fit nav ul {
+    font-size: 0.75em;
+    gap: 0.8em;
+  }
+
+  #banner .title {
+    font-size: 2.4em;
+  }
+
+  #contact table th,
+  #contact table td {
+    display: block;
+    text-align: center;
+    border-bottom: none;
+    padding-block: 0.15em;
+  }
+
+  #contact table tr {
+    display: block;
+    padding-block: 0.5em;
+    border-bottom: 1px dashed var(--color-line);
+  }
+}
+
+/* Accesibilidad: sin movimiento cuando el usuario lo pide */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  #container3D {
+    transition: none;
+  }
+
+  .title-letter {
+    transform: none;
+    transition: none;
+    animation: none !important;
   }
 }
