@@ -27,14 +27,14 @@ const POSITION_SETS = {
     { id: "intro", position: { x: 0, y: -2, z: -1 }, scale: 0.68, rotation: { x: 0.5, y: -0.6, z: 0 } },
     { id: "description", position: { x: 0.5, y: -3, z: -5 }, scale: 0.55, rotation: { x: 0.8, y: 1, z: 0 } },
     { id: "projects", position: { x: 0.5, y: -2.5, z: -3 }, scale: 0.62, rotation: { x: 0.35, y: 0.75, z: 0 } },
-    { id: "contact", position: { x: 0.1, y: -2.8, z: 10 }, scale: 1.55, rotation: { x: 3, y: -0.8, z: 2 } },
+    { id: "contact", position: { x: 0.1, y: -2.8, z: 15 }, scale: 0.85, rotation: { x: 0, y: 0, z: 0 } },
   ],
   desktop: [
     { id: "banner", position: { x: 0, y: -1, z: 5 }, scale: 1.08, rotation: { x: 0, y: 1.5, z: 0 } },
     { id: "intro", position: { x: 1, y: -1, z: -1 }, scale: 0.94, rotation: { x: 0.9, y: -0.5, z: 0 } },
     { id: "description", position: { x: -1, y: -1, z: -6 }, scale: 0.72, rotation: { x: 0, y: 0.5, z: 0 } },
     { id: "projects", position: { x: -0.5, y: -1, z: -2 }, scale: 0.86, rotation: { x: 0.35, y: 0.75, z: 0 } },
-    { id: "contact", position: { x: 1, y: -1, z: 16 }, scale: 1.85, rotation: { x: 0.3, y: -0.5, z: 5 } },
+    { id: "contact", position: { x: 1, y: -1, z: 23 }, scale: 0.85, rotation: { x: 0, y: 0, z: 0 } },
   ],
 };
 
@@ -57,6 +57,14 @@ const prepareReactiveTitles = () => {
 
 // --- Proyectos (imágenes locales: cero peticiones externas) ------------------
 const PROJECTS = [
+  {
+    name: "AtrapaEmpleos",
+    repo: "AtrapaEmpleos",
+    description: "Buscador asistido de ofertas laborales para Colombia con filtros configurables, puntuación de prioridad, reportes Excel y dashboard HTML.",
+    language: "Python",
+    type: "Automatización / datos",
+    image: "img/projects/AtrapaEmpleos.svg",
+  },
   {
     name: "Rifas",
     repo: "Rifas",
@@ -130,7 +138,7 @@ const renderProjects = () => {
 
   grid.innerHTML = PROJECTS.map((project) => {
     const repoUrl = `https://github.com/Monkeyxcx/${project.repo}`;
-    const previewUrl = `img/projects/${project.repo}.webp`;
+    const previewUrl = project.image || `img/projects/${project.repo}.webp`;
     const liveLink = project.homepage
       ? `<a class="project-card__link" href="${project.homepage}" target="_blank" rel="noopener noreferrer">Ver demo <span aria-hidden="true">↗</span></a>`
       : "";
@@ -233,6 +241,13 @@ const init3D = ({ THREE, GLTFLoader, DRACOLoader, gsap }) => {
   let engineLight = null;
   let elapsed = 0;
   const pointer = { x: 0, y: 0, targetX: 0, targetY: 0 };
+  // Traslación fija; la interacción solo modifica yaw, pitch y roll.
+  const dragRotation = { x: 0, y: 0, z: 0 };
+  let hasManualRotation = false;
+  let dragging = false;
+  let activePointerId = null;
+  let lastDragPoint = null;
+  const gestureZone = document.getElementById("car-gesture-zone");
 
   // Interacción reciente: decide 60 vs 30 fps en el gobernador de render.
   let idleAt = performance.now();
@@ -262,9 +277,11 @@ const init3D = ({ THREE, GLTFLoader, DRACOLoader, gsap }) => {
 
     const duration = instant || reducedMotion.matches ? 0 : isNarrow.matches ? 2 : 3;
 
-    gsap.to(world.position, { x: target.position.x, y: target.position.y, z: target.position.z, duration, ease: "power2.out", overwrite: "auto" });
+    // El modelo conserva su posición local (0, 0, 0); solo se mueve el pivote
+    // de composición para las transiciones visuales entre secciones.
+    gsap.to(modelPivot.position, { x: target.position.x, y: target.position.y, z: target.position.z, duration, ease: "power2.out", overwrite: "auto" });
     gsap.to(world.rotation, { x: target.rotation.x, y: target.rotation.y, z: target.rotation.z, duration, ease: "power2.out", overwrite: "auto" });
-    gsap.to(world.scale, { x: target.scale, y: target.scale, z: target.scale, duration, ease: "power3.inOut", overwrite: "auto" });
+    gsap.to(modelPivot.scale, { x: target.scale, y: target.scale, z: target.scale, duration, ease: "power3.inOut", overwrite: "auto" });
   };
   sectionListeners.add((id) => moveModelTo(id));
 
@@ -279,6 +296,7 @@ const init3D = ({ THREE, GLTFLoader, DRACOLoader, gsap }) => {
     new URL("./car.glb", import.meta.url).href,
     (gltf) => {
       world = gltf.scene;
+      world.position.set(0, 0, 0);
       world.scale.setScalar(1);
       modelPivot.add(world);
       world.traverse((object) => {
@@ -325,12 +343,17 @@ const init3D = ({ THREE, GLTFLoader, DRACOLoader, gsap }) => {
 
     pointer.x += (pointer.targetX - pointer.x) * 0.06;
     pointer.y += (pointer.targetY - pointer.y) * 0.06;
-    if (world && !reducedMotion.matches) {
-      modelPivot.rotation.x = pointer.y * 0.035;
-      modelPivot.rotation.y = pointer.x * 0.045;
+    if (world && (!reducedMotion.matches || hasManualRotation)) {
+      // La posición del pivote permanece fija. Solo se interpolan los tres
+      // ángulos locales: pitch (X), yaw (Y) y roll (Z).
+      const targetRotationX = hasManualRotation ? dragRotation.x : 0;
+      const targetRotationY = hasManualRotation ? dragRotation.y : 0;
+      const targetRotationZ = hasManualRotation ? dragRotation.z : 0;
+      modelPivot.rotation.x += (targetRotationX - modelPivot.rotation.x) * 0.12;
+      modelPivot.rotation.y += (targetRotationY - modelPivot.rotation.y) * 0.12;
+      modelPivot.rotation.z += (targetRotationZ - modelPivot.rotation.z) * 0.12;
     } else {
-      modelPivot.rotation.x = 0;
-      modelPivot.rotation.y = 0;
+      modelPivot.rotation.set(0, 0, 0);
     }
 
     const pulse = reducedMotion.matches ? 0 : (Math.sin(elapsed * 3.2) + 1) / 2;
@@ -378,6 +401,45 @@ const init3D = ({ THREE, GLTFLoader, DRACOLoader, gsap }) => {
     window.addEventListener("pointerleave", onPointerLeave, { passive: true });
   }
 
+  // Rotación manual de bajo coste: el modelo permanece en el mismo punto y
+  // solo gira el pivote local cuando el usuario arrastra la zona de control.
+  const onGestureStart = (event) => {
+    if (!gestureZone) return;
+    dragging = true;
+    activePointerId = event.pointerId;
+    lastDragPoint = { x: event.clientX, y: event.clientY };
+    hasManualRotation = true;
+    markActivity();
+    gestureZone.classList.add("is-dragging");
+    gestureZone.setPointerCapture?.(event.pointerId);
+    event.preventDefault();
+  };
+  const onGestureMove = (event) => {
+    if (!dragging || event.pointerId !== activePointerId || !lastDragPoint) return;
+    const deltaX = event.clientX - lastDragPoint.x;
+    const deltaY = event.clientY - lastDragPoint.y;
+    lastDragPoint = { x: event.clientX, y: event.clientY };
+    // Arrastre horizontal = yaw, vertical = pitch. La combinación de ambos
+    // movimientos produce roll, permitiendo controlar los tres ejes desde
+    // mouse o touch sin cambiar la posición del objeto.
+    dragRotation.y += deltaX * 0.012;
+    dragRotation.x += deltaY * 0.009;
+    dragRotation.z += (deltaX - deltaY) * 0.004;
+    markActivity();
+    event.preventDefault();
+  };
+  const onGestureEnd = (event) => {
+    if (event.pointerId !== activePointerId) return;
+    dragging = false;
+    activePointerId = null;
+    lastDragPoint = null;
+    gestureZone?.classList.remove("is-dragging");
+  };
+  gestureZone?.addEventListener("pointerdown", onGestureStart);
+  gestureZone?.addEventListener("pointermove", onGestureMove);
+  gestureZone?.addEventListener("pointerup", onGestureEnd);
+  gestureZone?.addEventListener("pointercancel", onGestureEnd);
+
   // --- Resize ---
   let resizeFrame = null;
   const applySize = () => {
@@ -405,6 +467,10 @@ const init3D = ({ THREE, GLTFLoader, DRACOLoader, gsap }) => {
     isNarrow.removeEventListener("change", onResize);
     window.removeEventListener("pointermove", onPointerMove);
     window.removeEventListener("pointerleave", onPointerLeave);
+    gestureZone?.removeEventListener("pointerdown", onGestureStart);
+    gestureZone?.removeEventListener("pointermove", onGestureMove);
+    gestureZone?.removeEventListener("pointerup", onGestureEnd);
+    gestureZone?.removeEventListener("pointercancel", onGestureEnd);
     document.removeEventListener("visibilitychange", onVisibilityChange);
     renderer.setAnimationLoop(null);
     renderer.dispose();
